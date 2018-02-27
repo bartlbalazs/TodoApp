@@ -1,6 +1,6 @@
 package hu.bartl.todo.conversion;
 
-import hu.bartl.todo.controller.TaskController;
+import hu.bartl.todo.controller.TaskRestController;
 import hu.bartl.todo.model.Task;
 import hu.bartl.todo.model.TaskResource;
 import org.springframework.hateoas.mvc.IdentifiableResourceAssemblerSupport;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class TaskResourceAssembler extends IdentifiableResourceAssemblerSupport<Task, TaskResource> {
 
     public TaskResourceAssembler() {
-        super(TaskController.class, TaskResource.class);
+        super(TaskRestController.class, TaskResource.class);
     }
 
     @Override

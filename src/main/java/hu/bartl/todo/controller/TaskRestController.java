@@ -20,13 +20,13 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("tasks")
-public class TaskController {
+public class TaskRestController {
 
     private TaskService taskService;
     private TaskMessagePublisher taskMessagePublisher;
     private TaskResourceAssembler taskResourceAssembler;
 
-    public TaskController(TaskService taskService, TaskMessagePublisher taskMessagePublisher, TaskResourceAssembler taskResourceAssembler) {
+    public TaskRestController(TaskService taskService, TaskMessagePublisher taskMessagePublisher, TaskResourceAssembler taskResourceAssembler) {
         this.taskService = taskService;
         this.taskMessagePublisher = taskMessagePublisher;
         this.taskResourceAssembler = taskResourceAssembler;

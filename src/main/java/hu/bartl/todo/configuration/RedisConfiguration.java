@@ -15,7 +15,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 @Configuration
 public class RedisConfiguration {
 
-    @Value("${todoapp.messagint.taskchannel}")
+    @Value("${todoapp.messaging.taskchannel}")
     private String taskChannelName;
 
     @Bean

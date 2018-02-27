@@ -29,8 +29,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest
-public class TaskControllerTest {
+@WebMvcTest(TaskRestController.class)
+public class TaskRestControllerTest {
 
     private static final String SAMPLE_UUID = "6a6d6728-115e-47f7-a23f-32b55182d55d";
     private static final String SAMPLE_DESCRIPTION = "sampleDescription";

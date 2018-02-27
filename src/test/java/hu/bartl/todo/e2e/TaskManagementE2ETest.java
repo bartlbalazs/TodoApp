@@ -3,7 +3,7 @@ package hu.bartl.todo.e2e;
 import hu.bartl.todo.model.Task;
 import hu.bartl.todo.model.TaskResource;
 import hu.bartl.todo.repository.TaskRepository;
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +69,7 @@ public class TaskManagementE2ETest {
         assertEquals(PERSISTED_TASKS_COUNT, taskResource.getBody().size());
     }
 
-    @After
+    @Before
     public void cleanUp() {
         taskRepository.deleteAll();
     }
