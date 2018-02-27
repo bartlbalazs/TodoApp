@@ -3,19 +3,19 @@ package hu.bartl.todo.e2e;
 import hu.bartl.todo.model.Task;
 import hu.bartl.todo.model.TaskResource;
 import hu.bartl.todo.repository.TaskRepository;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 public class TaskManagementE2ETest {
 
     private static final String SAMPLE_DESCRIPTION = "sampleDescription";
+    private static final int PERSISTED_TASKS_COUNT = 5;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -45,7 +46,7 @@ public class TaskManagementE2ETest {
     }
 
     @Test
-    public void shouldGetAlreadyPersistedTaskTask() {
+    public void shouldGetAlreadyPersistedTaskTas() {
         Task task = Task.builder().description(SAMPLE_DESCRIPTION).build();
         UUID taskId = taskRepository.save(task).getId();
 
@@ -53,5 +54,23 @@ public class TaskManagementE2ETest {
                 .getForEntity("/tasks/" + taskId.toString(), TaskResource.class);
 
         assertEquals(taskResource.getBody().getTaskId(), taskId);
+    }
+
+    @Test
+    public void shouldGetAlreadyPersistedTaskTasks() {
+        for (int i = 0; i < PERSISTED_TASKS_COUNT; i++) {
+            Task task = Task.builder().description(SAMPLE_DESCRIPTION).build();
+            taskRepository.save(task).getId();
+        }
+        ResponseEntity<List<TaskResource>> taskResource = restTemplate
+                .exchange("/tasks", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<TaskResource>>() {
+                });
+
+        assertEquals(PERSISTED_TASKS_COUNT, taskResource.getBody().size());
+    }
+
+    @After
+    public void cleanUp() {
+        taskRepository.deleteAll();
     }
 }
