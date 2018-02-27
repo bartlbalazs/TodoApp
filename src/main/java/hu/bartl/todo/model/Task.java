@@ -1,6 +1,6 @@
 package hu.bartl.todo.model;
 
-import lombok.Data;
+import lombok.*;
 import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
@@ -9,8 +9,11 @@ import java.util.UUID;
 
 import static java.time.Instant.now;
 
-@Data
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Task implements Identifiable<UUID> {
 
     @Id
