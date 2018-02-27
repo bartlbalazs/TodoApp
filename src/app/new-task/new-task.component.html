@@ -1,0 +1,8 @@
+<mat-card>
+    <form (ngSubmit)="onAddItem()" #f="ngForm" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+        <mat-form-field fxFlex>
+            <input class="mat-input" matInput name="content" ngModel>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit">Add item</button>
+    </form>
+</mat-card>
