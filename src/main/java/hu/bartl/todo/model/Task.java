@@ -1,6 +1,7 @@
 package hu.bartl.todo.model;
 
 import lombok.*;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.hateoas.Identifiable;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class Task implements Identifiable<UUID> {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID taskId;
     private Instant createdAt;
+    @NotEmpty
     private String description;
 
     @PrePersist

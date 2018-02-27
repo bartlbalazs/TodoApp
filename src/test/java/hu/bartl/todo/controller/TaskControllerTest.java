@@ -34,7 +34,7 @@ public class TaskControllerTest {
 
     private static final String SAMPLE_UUID = "6a6d6728-115e-47f7-a23f-32b55182d55d";
     private static final String SAMPLE_DESCRIPTION = "sampleDescription";
-    public static final int SAMPLE_TIMESTAMP = 0;
+    private static final int SAMPLE_TIMESTAMP = 0;
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,7 +49,7 @@ public class TaskControllerTest {
     private TaskResourceAssembler taskResourceAssembler;
 
     @Test
-    public void shouldReturnEmptyTaskList() throws Exception {
+    public void shouldReturnAllTasksFromService() throws Exception {
         ArrayList<Task> sampleTasks = new ArrayList<>();
         sampleTasks.add(buildRandomTask());
         sampleTasks.add(buildRandomTask());
@@ -62,7 +62,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void shouldReturnLocationHeaderAfterTaskCreated() throws Exception {
+    public void shouldReturnAcceptedHeaderAfterPostRequest() throws Exception {
         this.mockMvc.perform(post("/tasks")
                 .content("{ \"description\" : \"" + SAMPLE_DESCRIPTION + "\" }")
                 .contentType(APPLICATION_JSON))
@@ -70,7 +70,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void shouldReturnSampleTask() throws Exception {
+    public void shouldReturnTaskById() throws Exception {
         UUID taskID = UUID.fromString(SAMPLE_UUID);
         Instant sampleTimeStamp = Instant.ofEpochMilli(SAMPLE_TIMESTAMP);
         Task sampleTask = Task.builder().taskId(taskID).createdAt(sampleTimeStamp).description(SAMPLE_DESCRIPTION).build();
