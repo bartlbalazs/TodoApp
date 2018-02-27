@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgForm} from "@angular/forms";
+import {TaskService} from "../task.service";
 
 @Component({
     selector: 'app-new-task',
@@ -10,7 +11,7 @@ export class NewTaskComponent implements OnInit {
 
     @ViewChild('f') taskForm: NgForm;
 
-    constructor() {
+    constructor(private taskService: TaskService) {
     }
 
     ngOnInit() {
@@ -19,7 +20,7 @@ export class NewTaskComponent implements OnInit {
 
     onAddItem() {
         const content = this.taskForm.value.content;
-        console.log(content);
+        this.taskService.publishTask(content);
         this.taskForm.resetForm();
     }
 }

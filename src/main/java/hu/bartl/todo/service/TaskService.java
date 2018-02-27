@@ -3,6 +3,8 @@ package hu.bartl.todo.service;
 import hu.bartl.todo.model.Task;
 import hu.bartl.todo.repository.TaskRepository;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,16 +18,22 @@ public class TaskService {
 
     private static final Logger LOGGER = getLogger(TaskService.class);
 
-    private TaskRepository taskRepository;
+    @Value("${todoapp.messaging.broker}")
+    private String brokerName;
 
-    public TaskService(TaskRepository taskRepository) {
+    private TaskRepository taskRepository;
+    private SimpMessagingTemplate messagingTemplate;
+
+    public TaskService(TaskRepository taskRepository, SimpMessagingTemplate messagingTemplate) {
         this.taskRepository = taskRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public void createTaskWithDescription(String description) {
         Task task = Task.builder().description(description).build();
         taskRepository.save(task);
         LOGGER.info("Task persisted: {}", task);
+        messagingTemplate.convertAndSend("/" + brokerName + "/created", task);
     }
 
     public Task getTask(UUID taskID) {

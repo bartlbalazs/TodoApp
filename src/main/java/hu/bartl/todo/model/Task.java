@@ -1,5 +1,6 @@
 package hu.bartl.todo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.hateoas.Identifiable;
@@ -30,6 +31,7 @@ public class Task implements Identifiable<UUID> {
     }
 
     @Override
+    @JsonIgnore
     public UUID getId() {
         return taskId;
     }

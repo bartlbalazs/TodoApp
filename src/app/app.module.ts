@@ -1,4 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -13,7 +14,8 @@ import {AppComponent} from './app.component';
 import {TasksComponent} from './tasks/tasks.component';
 import {NewTaskComponent} from './new-task/new-task.component';
 import {TaskComponent} from './task/task.component';
-
+import {TaskService} from "./task.service";
+import {Stomp} from 'stompjs'
 
 @NgModule({
     declarations: [
@@ -29,11 +31,12 @@ import {TaskComponent} from './task/task.component';
         MatListModule,
         FormsModule,
         MatInputModule,
+        HttpClientModule,
         MatButtonModule,
         BrowserAnimationsModule,
         FlexLayoutModule
     ],
-    providers: [],
+    providers: [TaskService],
     bootstrap: [AppComponent]
 })
 export class AppModule {
