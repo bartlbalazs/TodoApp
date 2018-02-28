@@ -1,5 +1,6 @@
 package hu.bartl.todo.controller;
 
+import hu.bartl.todo.model.Task;
 import hu.bartl.todo.model.TaskDto;
 import hu.bartl.todo.service.TaskService;
 import org.junit.Before;
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeoutException;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -34,12 +36,6 @@ import static org.mockito.Mockito.verify;
 public class TaskWsControllerTest {
 
     private static final String SAMPLE_DESCRIPTION = "sampleDescription";
-
-    @Value("${todoapp.messaging.application-prefix}")
-    private String applicationPrefix;
-
-    @Value("${todoapp.messaging.stomp-endpoint}")
-    private String stompEndpoint;
 
     @Value("${local.server.port}")
     private int port;
@@ -69,20 +65,15 @@ public class TaskWsControllerTest {
         taskDto.setDescription(SAMPLE_DESCRIPTION);
 
         StompSession stompSession = getStompSession();
-        stompSession.send("/" + applicationPrefix + "/createTask", taskDto);
+        stompSession.send("/app/createTask", taskDto);
 
-        verify(taskService,timeout(1000)).createTaskWithDescription(SAMPLE_DESCRIPTION);
+        verify(taskService, timeout(1000)).persistTask(any(Task.class));
     }
 
     private StompSession getStompSession() throws InterruptedException, ExecutionException, TimeoutException {
-        StompSession stompSession = stompClient.connect(getStompUrl(), new StompSessionHandlerAdapter() {
+        StompSession stompSession = stompClient.connect("ws://localhost:" + port + "/gs-guide-websocket", new StompSessionHandlerAdapter() {
         }).get(1, SECONDS);
         return stompSession;
 
-    }
-
-
-    private String getStompUrl() {
-        return "ws://localhost:" + port + "/" + stompEndpoint;
     }
 }

@@ -38,7 +38,7 @@ public class TaskManagementE2ETest {
     public void shouldPersistNewMessage() throws InterruptedException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        HttpEntity<String> taskRequest = new HttpEntity<String>("{ \"description\":\"" + SAMPLE_DESCRIPTION + "\"}", headers);
+        HttpEntity<String> taskRequest = new HttpEntity<>("{ \"description\":\"" + SAMPLE_DESCRIPTION + "\"}", headers);
 
         restTemplate.postForLocation("/tasks", taskRequest);
         Task createdTask = taskRepository.findAll().iterator().next();
@@ -47,20 +47,20 @@ public class TaskManagementE2ETest {
 
     @Test
     public void shouldGetAlreadyPersistedTaskTas() {
-        Task task = Task.builder().description(SAMPLE_DESCRIPTION).build();
-        UUID taskId = taskRepository.save(task).getId();
+        Task task = Task.createWithDefaultValues(SAMPLE_DESCRIPTION);
+        taskRepository.save(task);
 
         ResponseEntity<TaskResource> taskResource = restTemplate
-                .getForEntity("/tasks/" + taskId.toString(), TaskResource.class);
+                .getForEntity("/tasks/" + task.getId().toString(), TaskResource.class);
 
-        assertEquals(taskResource.getBody().getTaskId(), taskId);
+        assertEquals(taskResource.getBody().getTaskId(), task.getId());
     }
 
     @Test
     public void shouldGetAlreadyPersistedTaskTasks() {
         for (int i = 0; i < PERSISTED_TASKS_COUNT; i++) {
-            Task task = Task.builder().description(SAMPLE_DESCRIPTION).build();
-            taskRepository.save(task).getId();
+            Task task = Task.createWithDefaultValues(SAMPLE_DESCRIPTION);
+            taskRepository.save(task);
         }
         ResponseEntity<List<TaskResource>> taskResource = restTemplate
                 .exchange("/tasks", HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<TaskResource>>() {

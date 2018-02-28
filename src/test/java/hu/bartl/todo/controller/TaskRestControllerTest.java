@@ -7,10 +7,12 @@ import hu.bartl.todo.model.TaskResource;
 import hu.bartl.todo.service.TaskService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.Link;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,8 +21,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
@@ -48,6 +49,9 @@ public class TaskRestControllerTest {
     @MockBean
     private TaskResourceAssembler taskResourceAssembler;
 
+    @MockBean
+    private SimpMessagingTemplate messagingTemplate;
+
     @Test
     public void shouldReturnAllTasksFromService() throws Exception {
         ArrayList<Task> sampleTasks = new ArrayList<>();
@@ -62,11 +66,19 @@ public class TaskRestControllerTest {
     }
 
     @Test
-    public void shouldReturnAcceptedHeaderAfterPostRequest() throws Exception {
+    public void shouldReturnLocationHeaderAfterPostRequest() throws Exception {
+        TaskResource taskResource = new TaskResource();
+        taskResource.setTaskId(randomUUID());
+        taskResource.setCreatedAt(SAMPLE_TIMESTAMP);
+        taskResource.setDescription(SAMPLE_DESCRIPTION);
+        taskResource.add(new Link("sample", "self"));
+        when(taskResourceAssembler.toResource(Mockito.any(Task.class))).thenReturn(taskResource);
+
         this.mockMvc.perform(post("/tasks")
                 .content("{ \"description\" : \"" + SAMPLE_DESCRIPTION + "\" }")
                 .contentType(APPLICATION_JSON))
-                .andExpect(status().isAccepted());
+                .andExpect(status().isCreated())
+                .andExpect(header().string("location", any(String.class)));
     }
 
     @Test

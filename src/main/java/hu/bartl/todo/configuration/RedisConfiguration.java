@@ -1,5 +1,8 @@
 package hu.bartl.todo.configuration;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import hu.bartl.todo.messaging.TaskMessageListener;
 import hu.bartl.todo.messaging.TaskMessagePublisher;
 import hu.bartl.todo.service.TaskService;
@@ -29,14 +32,11 @@ public class RedisConfiguration {
         return container;
     }
 
-    @Bean
-    public TaskMessageListener taskMessageListener(TaskService taskService) {
-        return new TaskMessageListener(taskService);
-    }
-
-    @Bean
-    public TaskMessagePublisher taskMessagePublisher(StringRedisTemplate redisTemplate) {
-        return new TaskMessagePublisher(redisTemplate, taskChannelName);
+    public ObjectMapper buildObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.findAndRegisterModules();
+        return objectMapper;
     }
 
     @Bean
@@ -45,7 +45,17 @@ public class RedisConfiguration {
     }
 
     @Bean
-    StringRedisTemplate template(RedisConnectionFactory connectionFactory) {
+    public TaskMessageListener taskMessageListener(TaskService taskService, ObjectMapper objectMapper) {
+        return new TaskMessageListener(taskService, objectMapper);
+    }
+
+    @Bean
+    public StringRedisTemplate redisTemplate(RedisConnectionFactory connectionFactory) {
         return new StringRedisTemplate(connectionFactory);
+    }
+
+    @Bean
+    public TaskMessagePublisher taskMessagePublisher(StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
+        return new TaskMessagePublisher(redisTemplate, taskChannelName, objectMapper);
     }
 }

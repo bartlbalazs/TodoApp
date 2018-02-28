@@ -18,22 +18,14 @@ public class TaskService {
 
     private static final Logger LOGGER = getLogger(TaskService.class);
 
-    @Value("${todoapp.messaging.broker}")
-    private String brokerName;
-
     private TaskRepository taskRepository;
-    private SimpMessagingTemplate messagingTemplate;
 
-    public TaskService(TaskRepository taskRepository, SimpMessagingTemplate messagingTemplate) {
+    public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        this.messagingTemplate = messagingTemplate;
     }
 
-    public void createTaskWithDescription(String description) {
-        Task task = Task.builder().description(description).build();
+    public void persistTask(Task task) {
         taskRepository.save(task);
-        LOGGER.info("Task persisted: {}", task);
-        messagingTemplate.convertAndSend("/" + brokerName + "/created", task);
     }
 
     public Task getTask(UUID taskID) {
