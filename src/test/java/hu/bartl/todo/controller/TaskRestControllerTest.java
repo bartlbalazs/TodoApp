@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
@@ -94,7 +95,7 @@ public class TaskRestControllerTest {
         taskResource.add(new Link("sample", "self"));
         when(taskResourceAssembler.toResource(sampleTask)).thenReturn(taskResource);
 
-        when(taskService.getTask(taskID)).thenReturn(sampleTask);
+        when(taskService.getTask(taskID)).thenReturn(Optional.of(sampleTask));
 
         this.mockMvc.perform(get("/tasks/" + SAMPLE_UUID))
                 .andExpect(status().isOk())
@@ -103,6 +104,14 @@ public class TaskRestControllerTest {
                 .andExpect(jsonPath("createdAt", is(SAMPLE_TIMESTAMP)))
                 .andExpect(jsonPath("description", is(SAMPLE_DESCRIPTION)))
                 .andExpect(jsonPath("$", hasKey("_links")));
+    }
+
+    @Test
+    public void shouldReturn404WhenTaskNotFound() throws Exception {
+        when(taskService.getTask(UUID.fromString(SAMPLE_UUID))).thenReturn(Optional.empty());
+
+        this.mockMvc.perform(get("/tasks/" + SAMPLE_UUID))
+                .andExpect(status().isNotFound());
     }
 
     private Task buildRandomTask() {

@@ -1,4 +1,4 @@
-package hu.bartl.todo.e2e;
+package hu.bartl.todo.itegration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

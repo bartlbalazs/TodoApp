@@ -2,6 +2,7 @@ package hu.bartl.todo.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import hu.bartl.todo.conversion.TaskResourceAssembler;
+import hu.bartl.todo.exception.ResourceNotFoundException;
 import hu.bartl.todo.messaging.TaskMessagePublisher;
 import hu.bartl.todo.model.Task;
 import hu.bartl.todo.model.TaskDto;
@@ -15,6 +16,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
@@ -49,8 +51,11 @@ public class TaskRestController {
 
     @GetMapping(value = "/{taskId}", produces = APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<TaskResource> getTask(@PathVariable String taskId) {
-        Task task = taskService.getTask(UUID.fromString(taskId));
-        return ok(taskResourceAssembler.toResource(task));
+        Optional<Task> optionalTask = taskService.getTask(UUID.fromString(taskId));
+        if (optionalTask.isPresent()) {
+            return ok(taskResourceAssembler.toResource(optionalTask.get()));
+        }
+        throw new ResourceNotFoundException(taskId);
     }
 
     @PostMapping

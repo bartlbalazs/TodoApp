@@ -1,4 +1,4 @@
-package hu.bartl.todo.e2e;
+package hu.bartl.todo.itegration;
 
 import hu.bartl.todo.model.Task;
 import hu.bartl.todo.model.TaskResource;
@@ -16,14 +16,13 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:test.properties")
-public class TaskManagementE2ETest {
+public class TaskManagementIntTest {
 
     private static final String SAMPLE_DESCRIPTION = "sampleDescription";
     private static final int PERSISTED_TASKS_COUNT = 5;

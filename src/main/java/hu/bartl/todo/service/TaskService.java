@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -28,8 +29,8 @@ public class TaskService {
         taskRepository.save(task);
     }
 
-    public Task getTask(UUID taskID) {
-        return taskRepository.findOne(taskID);
+    public Optional<Task> getTask(UUID taskID) {
+        return Optional.ofNullable(taskRepository.findOne(taskID));
     }
 
     public List<Task> getAllTasks() {
